@@ -3,6 +3,7 @@ com\app\controller\ProfileController.class
 com\app\model\User.class
 com\app\service\UserDetailsServiceImpl.class
 com\app\service\WebMvcConfig.class
+com\app\controller\MessageController$MessageRequest.class
 com\app\validator\UserValidator.class
 com\app\App.class
 com\app\repository\UserRepository.class
@@ -14,4 +15,9 @@ com\app\controller\MainController.class
 com\app\other\Other.class
 com\app\controller\LoginController.class
 com\app\service\CustomInterceptor.class
+com\app\model\FileMetadata.class
+com\app\repository\FileMetadataRepository.class
 com\app\model\Chat.class
+com\app\controller\MessageController.class
+com\app\controller\MessageController$MessageResponse.class
+com\app\service\FileStorageService.class

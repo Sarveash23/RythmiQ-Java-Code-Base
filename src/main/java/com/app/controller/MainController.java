@@ -40,26 +40,28 @@ public class MainController {
         if (!userService.isLogin(request)) {
             return "redirect:/login";
         }
-        LocalDateTime today12AM = LocalDateTime.of(LocalDate.now().getYear(), LocalDate.now().getMonth(), LocalDate.now().getDayOfMonth(), 0, 0, 0);
+        LocalDateTime today12AM = LocalDateTime.of(LocalDate.now().getYear(), LocalDate.now().getMonth(),
+                LocalDate.now().getDayOfMonth(), 0, 0, 0);
 
         LocalDateTime weekstart = LocalDateTime.now().minusDays(7);
         LocalDateTime monthStart = LocalDateTime.now().with(TemporalAdjusters.firstDayOfMonth());
 
         List<Chat> today = chatRepo.findAll();
-        //List<Chat> today = chatRepo.findAllByCreatedAtGreaterThanEqualOrderByCreatedAtDesc(today12AM);
-        //List<Chat> thisWeek = chatRepo.findAllByCreatedAtGreaterThanEqualOrderByCreatedAtDesc(weekstart);
-        //List<Chat> thisMonth = chatRepo.findAllByCreatedAtGreaterThanEqualOrderByCreatedAtDesc(monthStart);
+        // List<Chat> today =
+        // chatRepo.findAllByCreatedAtGreaterThanEqualOrderByCreatedAtDesc(today12AM);
+        // List<Chat> thisWeek =
+        // chatRepo.findAllByCreatedAtGreaterThanEqualOrderByCreatedAtDesc(weekstart);
+        // List<Chat> thisMonth =
+        // chatRepo.findAllByCreatedAtGreaterThanEqualOrderByCreatedAtDesc(monthStart);
 
-        
-        
         model.addAttribute("today", today);
-        //model.addAttribute("thisWeek", thisWeek);
-        //model.addAttribute("thisMonth", thisMonth);
-        
+        // model.addAttribute("thisWeek", thisWeek);
+        // model.addAttribute("thisMonth", thisMonth);
+
         return "main";
     }
 
-    @RequestMapping(value = "/save-data", method = {RequestMethod.POST})
+    @RequestMapping(value = "/save-data", method = { RequestMethod.POST })
     @ResponseBody
     @Procedure(value = "application/json")
     public String saveData(@RequestBody SaveChatBody body, HttpServletRequest request) {
