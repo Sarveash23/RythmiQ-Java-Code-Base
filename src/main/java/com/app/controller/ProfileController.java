@@ -2,7 +2,6 @@ package com.app.controller;
 
 import com.app.model.User;
 import com.app.service.UserService;
-import com.app.validator.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

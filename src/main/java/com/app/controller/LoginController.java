@@ -1,10 +1,8 @@
 package com.app.controller;
 
 import com.app.model.User;
-import com.app.other.Other;
 import com.app.repository.UserRepository;
 import com.app.service.UserService;
-import com.app.validator.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,9 +26,6 @@ public class LoginController {
     @Autowired
     private UserService userService;
 
-    @Autowired
-    private UserValidator userValidator;
-
     @RequestMapping(value = "/login", method = RequestMethod.GET)
     public String login(Model model, @ModelAttribute("login") User login,
             @RequestParam(value = "check", required = false) boolean check,
@@ -52,6 +47,7 @@ public class LoginController {
 
     }
 
+    @SuppressWarnings("unused")
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public String loginAccess(Model model, @ModelAttribute("login") User login, HttpServletRequest request) {
         User user = userRepository.findByUsername(login.getUsername());

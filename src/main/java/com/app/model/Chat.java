@@ -1,7 +1,6 @@
 package com.app.model;
 
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import javax.persistence.*;
 import org.springframework.data.annotation.CreatedDate;
