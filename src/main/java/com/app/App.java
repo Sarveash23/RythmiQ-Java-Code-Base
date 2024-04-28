@@ -15,7 +15,7 @@ public class App {
         SpringApplication.run(App.class, args);
         try {
             Runtime rt = Runtime.getRuntime();
-            rt.exec("cmd /c start chrome.exe http://localhost:8080/login");
+            rt.exec("cmd /c start chrome.exe http://localhost:8084/login");
         } catch (IOException e) {
             //e.printStackTrace();
         }
@@ -23,7 +23,7 @@ public class App {
 
     private static void openHomePage() {
         try {
-            URI homepage = new URI("http://localhost:8080/login");
+            URI homepage = new URI("http://localhost:8084/login");
             Desktop.getDesktop().browse(homepage);
         } catch (URISyntaxException | IOException e) {
             e.printStackTrace();

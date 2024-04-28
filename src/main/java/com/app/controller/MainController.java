@@ -86,7 +86,7 @@ public class MainController {
                 return ResponseEntity.ok("{\"saved\":false, \"error\":\"Title is required\"}");
             }
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println("Save data general Error: "+e.getMessage());
             // return
             // ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Conversion
             // error: " + e.getMessage());

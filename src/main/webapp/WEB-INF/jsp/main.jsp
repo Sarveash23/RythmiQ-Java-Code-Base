@@ -230,7 +230,6 @@
                                     }).then(res => res.json()).then(json => {
                                         console.log(json);
                                         let pdf_file = json.pdfFile;
-                                        console.log(typeof pdf_file);
                                         if (json.saved) {
                                             $('#chatBox').append('<br><div class="messageContainer"><img src="<%=request.getContextPath()%>/images/bot.png" class="avatar" /><div><p class="username">RhythmiQ</p></div><br></div>' +
                                                 '<div><embed id="pdfEmbed" src="' + '<%=request.getContextPath()%>' + pdf_file + '#toolbar=0" type="application/pdf" width="400" height="150" ><br /><button class="regenerateButton" onclick="openPdfInNewTab()" style="float:left">Open Pdf</button><div style="clear:both"></div></div>');
@@ -370,7 +369,7 @@
                                         id="history_area">
                                         <a style="margin-left: 20px; padding: 4px;"
                                             class="bg-[orange] text-white  rounded-[5px]"
-                                            href="http://localhost:8080/logout">Logout</a>
+                                            href="/logout">Logout</a>
                                         <h1 class="text-black bg-[#CDFD9F] w-2/3 text-center">Chat History</h1>
                                         <div class="flex flex-col justify-start w-2/3 space-y-6 h-4/6">
                                             <div class="flex flex-col">
