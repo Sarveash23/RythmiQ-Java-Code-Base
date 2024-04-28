@@ -7,6 +7,7 @@ import com.app.other.Other;
 import com.app.repository.ChatRepo;
 import com.app.repository.UserRepository;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
@@ -76,34 +77,52 @@ public class UserServiceImpl implements UserService {
         return user != null;
     }
 
+    // save chat (title , filepath, audiopath, createdTimestamp)
     @Override
     public void saveChat(SaveChatBody body, HttpServletRequest request) {
         User user = (User) request.getSession().getAttribute("loggedInUser");
-
-        InputStream pdfFile = getClass().getResourceAsStream("/static/music/music.pdf");
-        InputStream audioFile = getClass().getResourceAsStream("/static/music/audio.mp3");
-
-        File userDir = new File(new File(".").getAbsolutePath() + File.separator + "user_data");
-        if (!userDir.exists()) {
-            userDir.mkdirs();
+    
+        // Define the directory within resources
+        File userDir = new File(getClass().getResource("/static/music/").getPath());
+        if (!userDir.exists() && !userDir.mkdirs()) {
+            System.err.println("Failed to create directory: " + userDir);
+            return;
         }
-
-        File destinationPdf = new File(userDir.getAbsolutePath() + File.separator + "music-" + user.getId() + "__" + new SimpleDateFormat("YYYY-MM-dd-HH:mm:ss").format(new Date()) + ".pdf");
-        File destinationAudio = new File(userDir.getAbsolutePath() + File.separator + "audio-" + user.getId() + "__" + new SimpleDateFormat("YYYY-MM-dd-HH:mm:ss").format(new Date()) + ".mp3");
+    
+        // Get current timestamp
+        String timestamp = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date());
+    
+        // Declare paths for the new destination files outside the try block
+        File destinationPdf = null;
+        File destinationAudio = null;
+    
         try {
-            Files.copy(pdfFile, destinationPdf.toPath(), StandardCopyOption.REPLACE_EXISTING);
-            Files.copy(audioFile, destinationAudio.toPath(), StandardCopyOption.REPLACE_EXISTING);
-        } catch (Exception e) {
+            destinationPdf = new File(userDir, "music-" + user.getId() + "__" + timestamp + ".pdf");
+            destinationAudio = new File(userDir, "audio-" + user.getId() + "__" + timestamp + ".wav");
+    
+            // Copy the files
+            Files.copy(getClass().getResourceAsStream("/static/music/_music.pdf"), destinationPdf.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            Files.copy(getClass().getResourceAsStream("/static/music/_audio.wav"), destinationAudio.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            System.out.println("after renaming files ");
+        } catch (IOException e) {
             e.printStackTrace();
+            System.out.println("File conversion Error: "+e.getMessage());
+            return;  // Exit if there's a failure in file operations
         }
-
-        Chat chat = new Chat();
-        chat.setUser(user);
-        chat.setTitle(body.getTitle());
-        chat.setMusic_path("/user_data/" + destinationAudio.getName());
-        chat.setSheet_path("/user_data/" + destinationPdf.getName());
-        chat.setCreatedAt(LocalDateTime.now());
-        chatRepo.save(chat);
+    
+        // Save chat information to the database
+        try {
+            Chat chat = new Chat();
+            chat.setUser(user);
+            chat.setTitle(body.getTitle());
+            chat.setMusic_path("/music/" + destinationAudio.getName());
+            chat.setSheet_path("/music/" + destinationPdf.getName());
+            chat.setCreatedAt(LocalDateTime.now());
+            chatRepo.save(chat);
+        } catch (Exception e) {
+            System.out.println( "Chat saving Error: "+e.getMessage());
+        }
     }
-
+    
+    
 }

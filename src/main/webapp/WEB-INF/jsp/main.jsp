@@ -110,6 +110,7 @@
                         <script>
                             var clearFirstTime = false;
                             var title = null;
+                            let filePath = null;
                             function clear() {
                                 $('#chatBox').html(''); // Clear the chat box
                             }
@@ -132,8 +133,8 @@
                             }
 
                             function send(fromHistory) {
-                                var msg = $('#message').val(); // get text from input
-                                if ($.trim(msg).length > 0) { // validate text present
+                                title = $('#message').val(); // get text from input
+                                if ($.trim(title).length > 0) { // validate text present
                                     if (!clearFirstTime) {
                                         $('#chatBox').html(''); // Clear the chat box initial welcome message
                                         clearFirstTime = true;
@@ -141,43 +142,47 @@
 
                                     // Show loading modal
                                     if (!fromHistory) {
-                                        console.log("modal opened");
                                         $('#loadingModal').modal('show');
                                     }
 
-                                    $('#chatBox').append('<div class="messageContainer"><img src="<%=request.getContextPath()%>/images/bot.png" class="avatar" /><div><p class="username">RhythmiQ</p><p class="message">' + msg + '</p></div><br></div>');
+                                    $('#chatBox').append('<div class="messageContainer"><img src="<%=request.getContextPath()%>/images/profile.jpg" class="avatar" /><div><p class="username">User</p><p class="message">' + title + '</p></div><br></div>');
 
-                                    // Send the message to the backend
-                                    $.ajax({
-                                        url: '<%=request.getContextPath()%>/api/message',
-                                        type: 'POST',
-                                        contentType: 'application/json',
-                                        data: JSON.stringify({ message: msg }),
-                                        success: function (response) {
+                                    // get audio 
+                                    getAudio(title);
 
-                                            $('#chatBox').append('<br><div class="messageContainer" id="audio_msg_title"><img src="<%=request.getContextPath()%>/images/bot.png" class="avatar"/><div><p class="username">RhythmiQ</p></div><br></div>' +
-                                                '<audio id="audio_msg" controls>' +
-                                                '<source src="${pageContext.request.contextPath}' + response.message + '" type="audio/wav">' +
-                                                '<source src="${pageContext.request.contextPath}' + response.message + '" type="audio/mpeg">' +
-                                                'Your browser does not support the audio element.</audio>');
-                                            $('#chatBox').append('<div class="buttonContainer"><button class="regenerateButton" onclick="generate()">Regenerate</button><button class="transcribeButton" onclick="transcribe()">Transcribe</button></div>');
-                                            $('#message').val('');
-                                        },
-                                        error: function () {
-                                            // Handle errors here
-                                            alert('Error sending message');
-                                        },
-                                        complete: function () {
-                                            setTimeout(() => {
-                                                $('#loadingModal').modal('hide');
-                                            }, 1000);
-
-                                        }
-                                    });
                                 }
                             }
 
+                            function getAudio(title) {
+                                // Send the message to the backend
+                                $.ajax({
+                                    url: '<%=request.getContextPath()%>/message',
+                                    type: 'POST',
+                                    contentType: 'application/json',
+                                    data: JSON.stringify({ title: title }),
+                                    success: function (response) {
+                                        filePath = response.message;
+                                        $('#chatBox').append('<br><div class="messageContainer" id="audio_msg_title"><img src="<%=request.getContextPath()%>/images/bot.png" class="avatar"/><div><p class="username">RhythmiQ</p></div><br></div>' +
+                                            '<audio id="audio_msg" controls>' +
+                                            '<source src="${pageContext.request.contextPath}' + filePath + '" type="audio/wav">' +
+                                            '<source src="${pageContext.request.contextPath}' + filePath + '" type="audio/mpeg">' +
+                                            'Your browser does not support the audio element.</audio>');
+                                        $('#chatBox').append('<div class="buttonContainer"><button class="regenerateButton" onclick="generate()">Regenerate</button><button class="transcribeButton" onclick="transcribe()">Transcribe</button></div>');
+                                    },
+                                    error: function () {
+                                        // Handle errors here
+                                        alert('Error sending message');
+                                    },
+                                    complete: function () {
+                                        setTimeout(() => {
+                                            $('#message').val('');
+                                            $('#loadingModal').modal('hide');
+                                        }, 1000);
 
+                                    }
+                                });
+
+                            }
 
                             function generate() {
                                 $('#loadingModal').modal('hide');
@@ -187,21 +192,23 @@
                                 $('.regenerateButton').hide();
                                 $('.transcribeButton').hide();
                                 $('#loadingModal').modal('show');
-                                setTimeout(function () {
-                                    // Hide loading modal
+                                // Hide loading modal
 
-                                    $('#chatBox').append('<br><div class="messageContainer" id="audio_msg_title"><img src="<%=request.getContextPath()%>/images/bot.png" class="avatar" /><div><p class="username">RhythmiQ</p></div><br></div>' +
-                                        ' <audio id="audio_msg" controls> <source src="${pageContext.request.contextPath}/music/audio.mp3" type="audio/ogg"> <source src="${pageContext.request.contextPath}/music/audio.mp3" type="audio/mpeg"> Your browser does not support the audio element.</audio>');
-                                    $('.buttonContainer').remove();
-                                    // $('.buttonContainer').remove();
-                                    $('#chatBox').append('<br><div class="buttonContainer"><button class="regenerateButton" onclick="generate()">Regenerate</button><button class="transcribeButton" onclick="transcribe()">Transcribe</button></div>');
+                                // $('#chatBox').append('<br><div class="messageContainer" id="audio_msg_title"><img src="<%=request.getContextPath()%>/images/bot.png" class="avatar" /><div><p class="username">RhythmiQ</p></div><br></div>' +
+                                //     ' <audio id="audio_msg" controls> <source src="${pageContext.request.contextPath}/music/audio.mp3" type="audio/ogg"> <source src="${pageContext.request.contextPath}/music/audio.mp3" type="audio/mpeg"> Your browser does not support the audio element.</audio>');
+                                // $('.buttonContainer').remove();
+                                $('.buttonContainer').remove();
 
-                                    $('#message').val('');
+                                // $('#chatBox').append('<br><div class="buttonContainer"><button class="regenerateButton" onclick="generate()">Regenerate</button><button class="transcribeButton" onclick="transcribe()">Transcribe</button></div>');
 
-                                    $('#loadingModal').modal('hide');
-                                    $('.regenerateButton').show();
-                                    $('.transcribeButton').show();
-                                }, 2000); // 1 minute in milliseconds
+                                // $('#message').val('');
+
+                                // get audio 
+                                getAudio(title);
+
+                                $('#loadingModal').modal('hide');
+                                $('.regenerateButton').show();
+                                $('.transcribeButton').show();
 
                             }
 
@@ -209,37 +216,43 @@
                                 if (!fromHistory) {
                                     $('#transcribeModal').modal('show');
                                 }
-                                setTimeout(function () {
-                                    // Hide loading modal
-                                    $('#transcribeModal').modal('hide');
+                                // setTimeout(function () { 
+                                // Hide loading modal
+                                $('#transcribeModal').modal('hide');
 
-                                    $('#chatBox').append('<br><div class="messageContainer"><img src="<%=request.getContextPath()%>/images/bot.png" class="avatar" /><div><p class="username">RhythmiQ</p></div><br></div>' +
-                                        '<div><embed id="pdfEmbed" src="${pageContext.request.contextPath}/music/music.pdf#toolbar=0" type="application/pdf" width="400" height="150" ><br /><button class="regenerateButton" onclick="openPdfInNewTab()"  style="float:left" >Open Pdf</button><div style="clear:both"></div></div>');
+                                if (!fromHistory) {
+                                    fetch('/save-data', {
+                                        method: 'POST',
+                                        body: JSON.stringify({ title: title, filePath: filePath }),
+                                        headers: {
+                                            'Content-Type': 'application/json'
+                                        }
+                                    }).then(res => res.json()).then(json => {
+                                        console.log(json);
+                                        let pdf_file = json.pdfFile;
+                                        console.log(typeof pdf_file);
+                                        if (json.saved) {
+                                            $('#chatBox').append('<br><div class="messageContainer"><img src="<%=request.getContextPath()%>/images/bot.png" class="avatar" /><div><p class="username">RhythmiQ</p></div><br></div>' +
+                                                '<div><embed id="pdfEmbed" src="' + '<%=request.getContextPath()%>' + pdf_file + '#toolbar=0" type="application/pdf" width="400" height="150" ><br /><button class="regenerateButton" onclick="openPdfInNewTab()" style="float:left">Open Pdf</button><div style="clear:both"></div></div>');
 
-                                    $('#message').val('');
-                                    $('.buttonContainer').remove();
-                                    if (!fromHistory) {
-                                        fetch('/save-data', {
-                                            method: 'POST',
-                                            body: JSON.stringify({ title: title }),
-                                            headers: {
-                                                'Content-Type': 'application/json'
-                                            }
-                                        }).then(res => res.json()).then(json => {
-
-                                        }).catch(e => {
-                                            console.log(e)
-                                        }).finally(() => {
-
-                                            fetch('/main').then(res => res.text()).then(html => {
-                                                $('#history_area').html($(html).find('#history_area').html());
-                                            });
-
+                                        } else {
+                                            alert(json.error);
+                                        }
+                                    }).catch(e => {
+                                        console.log(e)
+                                    }).finally(() => {
+                                        $('#transcribeModal').modal('hide');
+                                        $('#message').val('');
+                                        $('.buttonContainer').remove();
+                                        fetch('/main').then(res => res.text()).then(html => {
+                                            $('#history_area').html($(html).find('#history_area').html());
                                         });
-                                    }
+                                    });
+
+                                }
 
 
-                                }, (fromHistory ? 1 : 2000)); // 1 minute in milliseconds
+                                // }, (fromHistory ? 1 : 2000)); // 1 minute in milliseconds
 
                                 var chatbox = document.getElementById("message");
                                 chatbox.disabled = true;
