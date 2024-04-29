@@ -1,6 +1,7 @@
 package com.app.controller;
 
 import com.app.model.User;
+import com.app.other.Other;
 import com.app.repository.UserRepository;
 import com.app.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +16,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Created by: arif hosain Created at : 4/12/2024
+ *
+ * @author Sarveashwaran
  */
+
 @Controller
 public class LoginController {
 
@@ -52,7 +55,7 @@ public class LoginController {
     public String loginAccess(Model model, @ModelAttribute("login") User login, HttpServletRequest request) {
         User user = userRepository.findByUsername(login.getUsername());
         if (user != null) {
-            if (true) {
+            if (Other.encrypt(getString(login.getPassword())).equals(user.getPassword())) {
                 userService.login(login.getUsername(), login.getPassword(), request);
                 return "redirect:/main";
             } else {
