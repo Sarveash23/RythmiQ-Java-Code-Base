@@ -9,7 +9,6 @@ import org.apache.commons.codec.digest.DigestUtils;
 
 public class Other {
 
-    public static String filePath = "D:\\work\\resource";
 
     public static String encrypt(String str) {
         return DigestUtils.md5Hex(str);

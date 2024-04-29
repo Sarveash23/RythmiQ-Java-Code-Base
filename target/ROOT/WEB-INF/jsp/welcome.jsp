@@ -26,8 +26,8 @@
 <body>
 <div class="container">
   <center> <h1>Welcome to App</h1>
-  <a href="http://localhost:8080/login" class="btn btn-success">Login</a>
-  <a href="http://localhost:8080/registration" class="btn btn-primary">Register</a>
+  <a href="/login" class="btn btn-success">Login</a>
+  <a href="/registration" class="btn btn-primary">Register</a>
   </center>
 
 </div>

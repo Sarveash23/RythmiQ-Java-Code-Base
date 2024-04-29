@@ -7,5 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ChatRepo extends JpaRepository<Chat, Long> {
     public List<Chat> findAllByCreatedAtGreaterThanEqualOrderByCreatedAtDesc(LocalDateTime time);
-   
+    public List<Chat> findAllByUserId(Long userId);
+
 }

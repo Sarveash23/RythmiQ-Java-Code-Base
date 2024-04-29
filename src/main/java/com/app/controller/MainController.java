@@ -2,6 +2,7 @@ package com.app.controller;
 
 import com.app.dto.SaveChatBody;
 import com.app.model.Chat;
+import com.app.model.User;
 import com.app.repository.ChatRepo;
 import com.app.service.FileStorageService;
 import com.app.service.UserService;
@@ -44,7 +45,8 @@ public class MainController {
         if (!userService.isLogin(request)) {
             return "redirect:/login";
         }
-        List<Chat> today = chatRepo.findAll();
+        User user = (User) request.getSession().getAttribute("loggedInUser");
+        List<Chat> today = chatRepo.findAllByUserId(user.getId());
 
         model.addAttribute("today", today);
         return "main";
