@@ -45,6 +45,6 @@ public class RegisterController {
 
     @RequestMapping(value = {"/", "/welcome"}, method = RequestMethod.GET)
     public String welcome(Model model) {
-        return "welcome";
+        return "redirect:/login";
     }
 }

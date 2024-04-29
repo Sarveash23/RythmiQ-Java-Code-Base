@@ -34,7 +34,7 @@
 
                             #chatBox {
                                 position: relative;
-                                text-align: center;
+                                /* text-align: center; */
                                 width: 100%;
                                 padding-top: 0px;
                                 margin-top: 0px;
@@ -228,7 +228,6 @@
                                             'Content-Type': 'application/json'
                                         }
                                     }).then(res => res.json()).then(json => {
-                                        console.log(json);
                                         let pdf_file = json.pdfFile;
                                         if (json.saved) {
                                             $('#chatBox').append('<br><div class="messageContainer"><img src="<%=request.getContextPath()%>/images/bot.png" class="avatar" /><div><p class="username">RhythmiQ</p></div><br></div>' +
@@ -267,9 +266,52 @@
                                 clearFirstTime = false;
                                 var chatbox = document.getElementById("message");
                                 chatbox.disabled = false;
-                                $('#message').val(text);
-                                send(true);
+                                // $('#message').val(text);
+                                // clear chat box
+                                $('#chatBox').html('');
+                                // fetch data for chat 
+                                getHistory(chatId);
                             }
+
+                            function getHistory(chatId) {
+
+                                // Send the message to the backend
+                                $.ajax({
+                                    url: '<%=request.getContextPath()%>/history/'+chatId,
+                                    type: 'GET',
+                                    contentType: 'application/json',
+                                    success: function (response) {
+                                        let audioPath = response.music_path;
+                                        let filePath = response.sheet_path;
+                                        let res_title = response.title;
+                                        $('#chatBox').append('<div class="messageContainer"><img src="<%=request.getContextPath()%>/images/profile.jpg" class="avatar" /><div><span class="username">User</span><p class="message">' + res_title + '</p></div><br></div>');
+
+                                        $('#chatBox').append('<br><div class="messageContainer" id="audio_msg_title"><img src="<%=request.getContextPath()%>/images/bot.png" class="avatar"/><div><p class="username">RhythmiQ</p></div><br></div>' +
+                                            '<audio id="audio_msg" controls>' +
+                                            '<source src="${pageContext.request.contextPath}' + audioPath + '" type="audio/wav">' +
+                                            '<source src="${pageContext.request.contextPath}' + audioPath + '" type="audio/mpeg">' +
+                                            'Your browser does not support the audio element.</audio>');
+                                                
+                                        // append file 
+                                        $('#chatBox').append('<br><div class="messageContainer"><img src="<%=request.getContextPath()%>/images/bot.png" class="avatar" /><div><p class="username">RhythmiQ</p></div><br></div>' +
+                                                '<div><embed id="pdfEmbed" src="' + '<%=request.getContextPath()%>' + filePath + '#toolbar=0" type="application/pdf" width="400" height="150" ><br /><button class="regenerateButton" onclick="openPdfInNewTab()" style="float:left">Open Pdf</button><div style="clear:both"></div></div>');
+
+
+                                    },
+                                    error: function (e) {
+                                        // Handle errors here
+                                        alert('Error Fetching History');
+                                    },
+                                    complete: function () {
+                                        // disable input 
+                                        var chatbox = document.getElementById("message");
+                                         chatbox.disabled = true;
+                                    }
+                                });
+
+                            }
+
+                            
 
                         </script>
                     </head>

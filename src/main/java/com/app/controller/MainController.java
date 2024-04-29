@@ -12,6 +12,9 @@ import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
 
 import java.util.List;
+import java.util.Optional;
+
+import org.apache.catalina.connector.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -26,6 +29,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
+
 
 /**
  *
@@ -68,6 +75,24 @@ public class MainController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
+
+    @GetMapping("/history/{chatId}")
+    public ResponseEntity<?> getHistory(@PathVariable Long chatId) {
+        try {
+
+            // query db for the chat return 
+            Optional<Chat> chat = chatRepo.findById(chatId);
+            if (chat.isPresent()) {
+                return ResponseEntity.ok(chat.get());
+            }else{
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Chat with ID "+chatId+" not found!");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+
 
     @RequestMapping(value = "/save-data", method = { RequestMethod.POST })
     @ResponseBody
@@ -152,11 +177,6 @@ public class MainController {
         }
     }
 
-    // regenerate
-
-    // generate pdf
-    // convert midi api
-    // convert sheet api
 
     static class MessageRequest {
         private String message;
